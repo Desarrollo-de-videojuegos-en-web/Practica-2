@@ -18,7 +18,12 @@ var positions = {
 
 var BackSprite = function(){
 	this.setup('ParedIzda',{x:0,y:0});
+	this.setup('TapperGameplay', {x:0,y:0});
 	this.draw(Game.ctx);
+
+	this.step = function(dt){
+		
+	};
 };
 
 BackSprite.prototype = new Sprite();
@@ -29,15 +34,16 @@ var Player = function(){
 
 	this.step = function(dt){
 		var position = this.getPosition();
-		this.setPosition(position);
+		this.setPosition(this, position);
 		if(Game.keys['fire']){
 			Game.keys['fire'] = false;
 			console.log('fireeeee');
+			//Game.boards[3].add(new Beer(this.x-25, this.y, 2));
 			//var newBeer = Object.assign({},beerToClone);
 			//newBeer.x=500;
 			//newBeer.y=500;
-			var newBeer = new Beer(200,200,50);
-			this.boardPlayer.add(newBeer);
+			var newBeer = new Beer(this.x-25,this.y,50);
+			this.board.add(newBeer);
 		}
 	};
 };
@@ -51,13 +57,23 @@ Player.prototype.getPosition = function(){
 	else if(this.x==421 && this.y==377) return 4;
 };
 
-Player.prototype.setPosition = function(position){
+Player.prototype.setPosition = function(that, position){
 	switch(position){
 		case 1:
 			if(Game.keys['up']){
-				this.x=421; this.y=377;
+				setTimeout(function(){
+					that.x=421; that.y=377;
+									console.log('uppp');
+ 
+					//obj.click = false;
+				}, 1000);
+				
 			}else if(Game.keys['down']){
-				this.x=357; this.y=185;
+				setTimeout(function(){
+					this.x=357; this.y=185;
+					//obj.click = false;
+				}, 1000);
+				
 			}
 			break;
 		case 2:
@@ -69,6 +85,7 @@ Player.prototype.setPosition = function(position){
 			break;
 		case 3:
 			if(Game.keys['up']){
+
 				this.x=357; this.y=185;
 			}else if(Game.keys['down']){
 				this.x=421; this.y=377;
@@ -84,16 +101,33 @@ Player.prototype.setPosition = function(position){
 	}
 };
 
+
 var Beer = function(x, y, velocity){
-	this.setup('Beer', {x:x,y:y});
+	this.setup('Beer', {x:x,y:y,vx:velocity});
 	this.draw(Game.ctx);
+
+	this.step = function(dt){
+		
+		console.log(this.x-100);
+		//if(this.x-100 != 0) { this.x += -7; }
+		if(this.x-100>0) { this.x += -7; }
+	};
+
 };
 
 Beer.prototype = new Sprite();
 
 var Client = function(){
-	this.setup('NPC', {x:225,y:90});
+	this.setup('NPC', {x:225,y:90,vx:7});
 	this.draw(Game.ctx);
+
+	this.step = function(dt){
+		
+		if(300-this.x!=0 ) { this.x += 1;
+			console.log(this.x);
+    	  //this.x = Game.width - this.w;
+    	}
+	};
 };
 
 Client.prototype = new Sprite();
@@ -103,10 +137,11 @@ var playGame = function(){
 	board.add(new BackSprite());
 	var boardPlayer = new GameBoard();
 	boardPlayer.add(new Player());
-	boardPlayer.add(new Beer(275,90,10));
+	//boardPlayer.add(new Beer(275,90,20));
 	boardPlayer.add(new Client());
-	Game.setBoard(2,board);
 	Game.setBoard(3,boardPlayer);
+	Game.setBoard(2,board);
+
 };
 
 
