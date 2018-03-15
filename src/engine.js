@@ -232,8 +232,11 @@ var GameBoard = function() {
   // Call the same method on all current objects 
   this.iterate = function(funcName) {
      var args = Array.prototype.slice.call(arguments,1);
+
      for(var i=0,len=this.objects.length;i<len;i++) {
        var obj = this.objects[i];
+       //console.log(obj);
+       //console.log(obj[funcName]);
        obj[funcName].apply(obj,args);
      }
   };
