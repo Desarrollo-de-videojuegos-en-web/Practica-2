@@ -17,19 +17,28 @@ var positions = {
 
 
 var BackSprite = function(){
-	this.setup('ParedIzda',{x:100,y:100});
-
+	this.setup('ParedIzda',{x:0,y:0});
+	this.draw(Game.ctx);
 };
 
 BackSprite.prototype = new Sprite();
 
 var Player = function(){
 	this.setup('Player', {x:325,y:90});
+	this.draw(Game.ctx);
 
-	this.step = function(){
+	this.step = function(dt){
 		var position = this.getPosition();
 		this.setPosition(position);
-		this.checkBeer();
+		if(Game.keys['fire']){
+			Game.keys['fire'] = false;
+			console.log('fireeeee');
+			//var newBeer = Object.assign({},beerToClone);
+			//newBeer.x=500;
+			//newBeer.y=500;
+			var newBeer = new Beer(200,200,50);
+			this.boardPlayer.add(newBeer);
+		}
 	};
 };
 
@@ -75,27 +84,29 @@ Player.prototype.setPosition = function(position){
 	}
 };
 
-Player.prototype.checkBeer = function(){
-	if(Game.keys['fire']){
-		this.boardPlayer.add(new Beer(this.x+20, this.y));
-	}
-};
-
 var Beer = function(x, y, velocity){
-	this.setup('Beer', {x:50,y:50});
-
+	this.setup('Beer', {x:x,y:y});
+	this.draw(Game.ctx);
 };
 
 Beer.prototype = new Sprite();
+
+var Client = function(){
+	this.setup('NPC', {x:225,y:90});
+	this.draw(Game.ctx);
+};
+
+Client.prototype = new Sprite();
 
 var playGame = function(){
 	var board = new GameBoard();
 	board.add(new BackSprite());
 	var boardPlayer = new GameBoard();
 	boardPlayer.add(new Player());
-	boardPlayer.add(new Beer());
-	Game.setBoard(0,board);
-	Game.setBoard(1,boardPlayer);
+	boardPlayer.add(new Beer(275,90,10));
+	boardPlayer.add(new Client());
+	Game.setBoard(2,board);
+	Game.setBoard(3,boardPlayer);
 };
 
 
