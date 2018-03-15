@@ -7,20 +7,14 @@ var sprites = {
 	TapperGameplay: {sx: 0,sy: 480,w: 512,h: 480,frames: 1}
 };
 
-var positions = {
-	325: 1,
-	357: 2,
-	389: 3,
-	281: 4
-};
-
+var vPos = [90,185,281,377];
+var hPos = [325,357,389,421];
 
 
 var BackSprite = function(){
 	this.setup('ParedIzda',{x:0,y:0});
 	this.setup('TapperGameplay', {x:0,y:0});
 	this.draw(Game.ctx);
-
 	this.step = function(dt){
 		
 	};
@@ -29,87 +23,59 @@ var BackSprite = function(){
 BackSprite.prototype = new Sprite();
 
 var Player = function(){
-	this.setup('Player', {x:325,y:90});
+	this.setup('Player', {x:hPos[0],y:vPos[0]});
+	this.position = 0;
 	this.draw(Game.ctx);
 
 	this.step = function(dt){
-		var position = this.getPosition();
-		this.setPosition(this, position);
-		if(Game.keys['fire']){
-			Game.keys['fire'] = false;
-			console.log('fireeeee');
-			//Game.boards[3].add(new Beer(this.x-25, this.y, 2));
-			//var newBeer = Object.assign({},beerToClone);
-			//newBeer.x=500;
-			//newBeer.y=500;
-			var newBeer = new Beer(this.x-25,this.y,50);
-			this.board.add(newBeer);
-		}
+		this.setPosition(this);
+		this.checkFire(this);
+		
 	};
 };
 
 Player.prototype = new Sprite();
 
-Player.prototype.getPosition = function(){
-	if(this.x==325 && this.y==90) return 1;
-	else if(this.x==357 && this.y==185) return 2;
-	else if(this.x==389 && this.y==281) return 3;
-	else if(this.x==421 && this.y==377) return 4;
+Player.prototype.checkFire = function(that){
+	if(Game.keys['fire']){
+		Game.keys['fire'] = false;
+		//Game.boards[3].add(new Beer(this.x-25, this.y, 2));
+		//var newBeer = Object.assign({},beerToClone);
+		//newBeer.x=500;
+		//newBeer.y=500;
+		setTimeout(function(){
+			var newBeer = new Beer(that.x-25,that.y,50);
+			that.board.add(newBeer);
+		},100);
+	}
 };
-
-Player.prototype.setPosition = function(that, position){
-	switch(position){
-		case 1:
-			if(Game.keys['up']){
-				setTimeout(function(){
-					that.x=421; that.y=377;
-									console.log('uppp');
- 
-					//obj.click = false;
-				}, 1000);
-				
-			}else if(Game.keys['down']){
-				setTimeout(function(){
-					this.x=357; this.y=185;
-					//obj.click = false;
-				}, 1000);
-				
-			}
-			break;
-		case 2:
-			if(Game.keys['up']){
-				this.x=325; this.y=90;
-			}else if(Game.keys['down']){
-				this.x=389; this.y=281;
-			}
-			break;
-		case 3:
-			if(Game.keys['up']){
-
-				this.x=357; this.y=185;
-			}else if(Game.keys['down']){
-				this.x=421; this.y=377;
-			}
-			break;
-		case 4:
-			if(Game.keys['up']){
-				this.x=389; this.y=281;
-			}else if(Game.keys['down']){
-				this.x=325; this.y=90;
-			}
-			break;
+Player.prototype.setPosition = function(that){
+	if(Game.keys['up']){
+		Game.keys['up'] = false;
+		setTimeout(function(){
+			that.position-=1;
+			if(that.position<0) that.position=3;
+				that.x = hPos[that.position]; 
+				that.y = vPos[that.position];
+		},100);
+	}
+	if(Game.keys['down']){
+		Game.keys['down'] = false;
+		setTimeout(function(){
+			that.position = (that.position + 1)%4;
+			that.x = hPos[that.position]; 
+			that.y = vPos[that.position];
+		},100);
 	}
 };
 
-
-var Beer = function(x, y, velocity){
-	this.setup('Beer', {x:x,y:y,vx:velocity});
+var Beer = function(x, y, vx){
+	this.setup('Beer', {x:x,y:y,vx:vx});
+	this.position=vPos.indexOf(y);
+	console.log(this.position);
 	this.draw(Game.ctx);
 
 	this.step = function(dt){
-		
-		console.log(this.x-100);
-		//if(this.x-100 != 0) { this.x += -7; }
 		if(this.x-100>0) { this.x += -7; }
 	};
 
@@ -124,7 +90,6 @@ var Client = function(){
 	this.step = function(dt){
 		
 		if(300-this.x!=0 ) { this.x += 1;
-			console.log(this.x);
     	  //this.x = Game.width - this.w;
     	}
 	};
@@ -137,7 +102,6 @@ var playGame = function(){
 	board.add(new BackSprite());
 	var boardPlayer = new GameBoard();
 	boardPlayer.add(new Player());
-	//boardPlayer.add(new Beer(275,90,20));
 	boardPlayer.add(new Client());
 	Game.setBoard(3,boardPlayer);
 	Game.setBoard(2,board);
