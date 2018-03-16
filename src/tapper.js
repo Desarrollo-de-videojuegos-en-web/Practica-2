@@ -1,3 +1,8 @@
+var OBJECT_PLAYER = 1,
+    OBJECT_BEER = 2,
+    OBJECT_CLIENT = 4;
+
+
 var sprites = {
 	Beer: {sx: 512,sy: 99,w: 23,h: 32,frames: 1},
 	Glass: {sx: 512,sy: 131,w: 23,h: 32,frames: 1},
@@ -11,10 +16,13 @@ var playerVPos = [90,185,281,377];
 var playerHPos = [325,357,389,421];
 
 var clientVPos = [90,185,281,377];
-var clientHPos = [50,90,80,70];
+var clientHPos = [120,90,60,30];
 
 var beerVPos = [90,185,281,377];
-var beerHPos = [50,90,80,70];
+var beerHPos = [325,357,389,421];
+
+var leftLimits = [120,90,60,30];
+var rigthLimits = [325,357,389,421];
 
 var BackSprite = function(){
 	this.setup('ParedIzda',{x:0,y:0});
@@ -39,16 +47,13 @@ var Player = function(){
 };
 
 Player.prototype = new Sprite();
+Player.prototype.type = OBJECT_PLAYER;
 
 Player.prototype.checkFire = function(that){
 	if(Game.keys['fire']){
 		Game.keys['fire'] = false;
-		//Game.boards[3].add(new Beer(this.x-25, this.y, 2));
-		//var newBeer = Object.assign({},beerToClone);
-		//newBeer.x=500;
-		//newBeer.y=500;
 		setTimeout(function(){
-			var newBeer = new Beer(that.x-25,that.y,50);
+			var newBeer = new Beer('Beer',that.position, this.x, this.y, 1);
 			that.board.add(newBeer);
 		},100);
 	}
@@ -73,50 +78,86 @@ Player.prototype.setPosition = function(that){
 	}
 };
 
-var Beer = function(x, y, vx){
-	this.setup('Beer', {x:x,y:y,vx:vx});
-	this.position=vPos.indexOf(y);
-	console.log(this.position);
+var Beer = function(sprite, pos, x, y, vel){
+	if(sprite.localeCompare('Glass')==0){
+		console.log('Glass');
+		this.setup(sprite, {x:x,y:y,vx:vel});
+	}else{
+		console.log('Beer', sprite);
+		this.setup(sprite, {x:beerHPos[pos]-25,y:beerVPos[pos],vx:vel});
+	}
+	this.position=pos;
 	this.draw(Game.ctx);
 
 	this.step = function(dt){
-		if(this.x-100>0) { this.x += -7; 
-		}else{
-			this.board.remove(this);
+		if(this.x-leftLimits[this.position]>0) { 
+			this.x = this.x - this.vx;
+		}
+		var collision = this.board.collide(this,OBJECT_CLIENT);
+		if(collision) {
+			this.hit(0);
+			this.board.add(new Beer('Glass', this.position, this.x, this.y, -1));
+		}
+		var collision = this.board.collide(this,OBJECT_PLAYER);
+		if(collision) {
+			this.hit(0);
 		}
 	};
 
 };
 
+Beer.prototype.hit = function(damage){
+	this.board.remove(this);
+};
+
 Beer.prototype = new Sprite();
+Beer.prototype.type = OBJECT_BEER;
 
 var Client = function(pos,vel){
-	this.setup('NPC', {x:clientHPos[pos],y:clientVPos[pos],vx:vel});
+	this.setup('NPC', {x:clientHPos[pos]-23,y:clientVPos[pos],vx:vel});
+	this.position = pos;
 	this.draw(Game.ctx);
 
 	this.step = function(dt){
 		
-		if(300-this.x!=0 ) { 
+		if(playerHPos[this.position]-33-this.x!=0 ) { 
 			this.x += 1;
     	}else{
-			this.board.remove(this);
+			loseGame();
+		}
+		var collision = this.board.collide(this,OBJECT_BEER);
+		if(collision) {
+			this.hit(0);
 		}
 	};
 };
 
+Client.prototype.hit = function(damage){
+	this.board.remove(this);
+};
+
 Client.prototype = new Sprite();
+Client.prototype.type = OBJECT_CLIENT;
 
 var playGame = function(){
 	var board = new GameBoard();
 	board.add(new BackSprite());
 	var boardPlayer = new GameBoard();
 	boardPlayer.add(new Player());
-	boardPlayer.add(new Client(0,7));
+	boardPlayer.add(new Client(0,2));
+	boardPlayer.add(new Client(1,2));
+	boardPlayer.add(new Client(2,2));
+	boardPlayer.add(new Client(3,2));
 	Game.setBoard(2,board);
 	Game.setBoard(3,boardPlayer);
 
 };
 
+var loseGame = function() {
+  Game.setBoard(3,new TitleScreen("You lose!", 
+                                  "Press fire to play again",
+                                  playGame));
+};
 
 
 window.addEventListener("load", function() {
