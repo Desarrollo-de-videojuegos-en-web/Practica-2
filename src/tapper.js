@@ -7,23 +7,27 @@ var sprites = {
 	TapperGameplay: {sx: 0,sy: 480,w: 512,h: 480,frames: 1}
 };
 
-var vPos = [90,185,281,377];
-var hPos = [325,357,389,421];
+var playerVPos = [90,185,281,377];
+var playerHPos = [325,357,389,421];
 
+var clientVPos = [90,185,281,377];
+var clientHPos = [50,90,80,70];
+
+var beerVPos = [90,185,281,377];
+var beerHPos = [50,90,80,70];
 
 var BackSprite = function(){
 	this.setup('ParedIzda',{x:0,y:0});
 	this.setup('TapperGameplay', {x:0,y:0});
 	this.draw(Game.ctx);
 	this.step = function(dt){
-		
 	};
 };
 
 BackSprite.prototype = new Sprite();
 
 var Player = function(){
-	this.setup('Player', {x:hPos[0],y:vPos[0]});
+	this.setup('Player', {x:playerHPos[0],y:playerVPos[0]});
 	this.position = 0;
 	this.draw(Game.ctx);
 
@@ -55,16 +59,16 @@ Player.prototype.setPosition = function(that){
 		setTimeout(function(){
 			that.position-=1;
 			if(that.position<0) that.position=3;
-				that.x = hPos[that.position]; 
-				that.y = vPos[that.position];
+				that.x = playerHPos[that.position]; 
+				that.y = playerVPos[that.position];
 		},100);
 	}
 	if(Game.keys['down']){
 		Game.keys['down'] = false;
 		setTimeout(function(){
 			that.position = (that.position + 1)%4;
-			that.x = hPos[that.position]; 
-			that.y = vPos[that.position];
+			that.x = playerHPos[that.position]; 
+			that.y = playerVPos[that.position];
 		},100);
 	}
 };
@@ -76,22 +80,27 @@ var Beer = function(x, y, vx){
 	this.draw(Game.ctx);
 
 	this.step = function(dt){
-		if(this.x-100>0) { this.x += -7; }
+		if(this.x-100>0) { this.x += -7; 
+		}else{
+			this.board.remove(this);
+		}
 	};
 
 };
 
 Beer.prototype = new Sprite();
 
-var Client = function(){
-	this.setup('NPC', {x:225,y:90,vx:7});
+var Client = function(pos,vel){
+	this.setup('NPC', {x:clientHPos[pos],y:clientVPos[pos],vx:vel});
 	this.draw(Game.ctx);
 
 	this.step = function(dt){
 		
-		if(300-this.x!=0 ) { this.x += 1;
-    	  //this.x = Game.width - this.w;
-    	}
+		if(300-this.x!=0 ) { 
+			this.x += 1;
+    	}else{
+			this.board.remove(this);
+		}
 	};
 };
 
@@ -102,9 +111,9 @@ var playGame = function(){
 	board.add(new BackSprite());
 	var boardPlayer = new GameBoard();
 	boardPlayer.add(new Player());
-	boardPlayer.add(new Client());
-	Game.setBoard(3,boardPlayer);
+	boardPlayer.add(new Client(0,7));
 	Game.setBoard(2,board);
+	Game.setBoard(3,boardPlayer);
 
 };
 
