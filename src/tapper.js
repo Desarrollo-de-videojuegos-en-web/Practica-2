@@ -103,7 +103,7 @@ var Beer = function(sprite, pos, x, y, vel)
 		if(this.x>=rigthLimits[this.pos]) loseGame();
 		this.checkPlayerHit();
 		this.checkClientHit();
-		
+		this.checkDeadzoneHit();
 	};
 
 };
@@ -126,6 +126,14 @@ Beer.prototype.checkClientHit = function(){
 	}
 };
 
+Beer.prototype.checkDeadzoneHit = function(){
+	var collision = this.board.collide(this,OBJECT_DEADZONE);
+	if(collision) {
+		console.log('hi');
+		this.hit(0);
+	}
+};
+
 Beer.prototype.hit = function(damage){
 	this.board.remove(this);
 };
@@ -139,6 +147,7 @@ var Client = function(pos,vel){
 		
 		if(playerHPos[this.pos]-33-this.x!=0 ) this.x += 1;
 		this.checkBeerHit();
+		this.checkDeadzoneHit();
 	};
 };
 
@@ -151,21 +160,34 @@ Client.prototype.checkBeerHit = function(){
 		this.hit(0);
 	}
 };
+
+Client.prototype.checkDeadzoneHit = function(){
+	var collision = this.board.collide(this,OBJECT_DEADZONE);
+	if(collision) {
+		this.hit(0);
+	}
+};
+
 Client.prototype.hit = function(damage){
 	this.board.remove(this);
 };
 
 
-var DeadZone = function(){
+var DeadZone = function(x,y,w,h){
+	//this.setup('', {x:100,y:100,w:10,h:70});
+	this.x=x;
+	this.y=y;
+	this.w=w;
+	this.h=h;
+
 	this.step = function(dt){
-		this.draw();
 		this.checkClientHit();
 		this.checkBeerHit();
 		this.checkGlassHit();
 	};
-	
 };
 
+DeadZone.prototype = new Sprite();
 DeadZone.prototype.type = OBJECT_DEADZONE;
 
 DeadZone.prototype.checkClientHit = function(){
@@ -187,22 +209,12 @@ DeadZone.prototype.hit = function(damage){
 	loseGame();
 };
 
-DeadZone.prototype.draw = function(){
+DeadZone.prototype.draw = function(ctx){
 	var canvas = document.getElementById('game');
 	if (canvas.getContext) {
 		var ctx = canvas.getContext('2d');
 		ctx.fillStyle = "green";
-		//ctx.fillRect(345, 90, 10, 70);
-		//ctx.fillRect(377, 185, 10, 70);
-		//ctx.fillRect(409, 281, 10, 70);
-		//ctx.fillRect(441, 377, 10, 70);
-		ctx.fillRect(200, 185, 10, 70);
-		//ctx.fillRect(95, 90, 10, 70);
-		//ctx.fillRect(65, 185, 10, 70);
-		//ctx.fillRect(35, 281, 10, 70);
-		//ctx.fillRect(5, 377, 10, 70);
-
-
+		ctx.fillRect(this.x,this.y,this.w,this.h);
 	}
 };
 
@@ -215,7 +227,27 @@ var playGame = function(){
 	boardPlayer.add(new Client(1,2));
 	boardPlayer.add(new Client(2,2));
 	boardPlayer.add(new Client(3,2));
-	//boardPlayer.add(new DeadZone());
+	// estos 8 no valen
+	boardPlayer.add(new DeadZone(150, 90, 10, 70));
+	boardPlayer.add(new DeadZone(120, 185, 10, 70));
+	boardPlayer.add(new DeadZone(90, 281, 10, 70));
+	boardPlayer.add(new DeadZone(60, 377, 10, 70));
+
+	boardPlayer.add(new DeadZone(305, 90, 10, 70));
+	boardPlayer.add(new DeadZone(337, 185, 10, 70));
+	boardPlayer.add(new DeadZone(369, 281, 10, 70));
+	boardPlayer.add(new DeadZone(401, 377, 10, 70));
+
+
+	boardPlayer.add(new DeadZone(345, 90, 10, 70));
+	boardPlayer.add(new DeadZone(377, 185, 10, 70));
+	boardPlayer.add(new DeadZone(409, 281, 10, 70));
+	boardPlayer.add(new DeadZone(441, 377, 10, 70));
+	boardPlayer.add(new DeadZone(95, 90, 10, 70));
+	boardPlayer.add(new DeadZone(65, 185, 10, 70));
+	boardPlayer.add(new DeadZone(35, 281, 10, 70));
+	boardPlayer.add(new DeadZone(5, 377, 10, 70));
+
 	Game.setBoard(2,board);
 	Game.setBoard(3,boardPlayer);
 
