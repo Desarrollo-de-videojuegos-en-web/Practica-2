@@ -192,17 +192,17 @@ DeadZone.prototype.type = OBJECT_DEADZONE;
 
 DeadZone.prototype.checkClientHit = function(){
 	var collision = this.board.collide(this,OBJECT_CLIENT);
-	//if(collision) //collision.hit(0); 
+	if(collision) collision.hit(0); 
 };
 
 DeadZone.prototype.checkGlassHit = function(){
 	var collision = this.board.collide(this,OBJECT_GLASS);
-	//if(collision) collision.hit(0);
+	if(collision) collision.hit(0);
 };
 
 DeadZone.prototype.checkBeerHit = function(){
 	var collision = this.board.collide(this,OBJECT_BEER);
-	//if(collision) collision.hit(0);
+	if(collision) collision.hit(0);
 };
 
 DeadZone.prototype.hit = function(damage){
@@ -218,20 +218,73 @@ DeadZone.prototype.draw = function(ctx){
 	}
 };
 
+
+var Spawner = function(boardPlayer, clients, type, frequency, delay){
+	console.log(boardPlayer);
+
+	this.proto = new Client();
+	this.board = boardPlayer;
+	this.clients = clients;
+	this.type = type;
+	this.frequency = frequency;
+	this.delay = delay;
+};
+
+Spawner.prototype.run = function(dt) {
+	var counter = 0;
+	var wait = this.delay;
+	this.x(this);
+	
+		
+	
+ 
+};
+Spawner.prototype.x = function(that){
+	setTimeout(function(that){
+		var bar = Math.floor((Math.random() * 3) + 0);
+		that.board.add(that.clone(bar, that.proto));
+	},600);
+};
+
+Spawner.prototype.clone = function (bar, proto) {
+        var client = new Client(bar,5);
+        client.x = clientHPos[bar];
+        client.y = clientVPos[bar];
+        client.sprite = proto.sprite;
+        return client;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var playGame = function(){
 	var board = new GameBoard();
 	board.add(new BackSprite());
 	var boardPlayer = new GameBoard();
 	boardPlayer.add(new Player());
-	boardPlayer.add(new Client(0,2));
-	boardPlayer.add(new Client(1,2));
-	boardPlayer.add(new Client(2,2));
-	boardPlayer.add(new Client(3,2));
+	//boardPlayer.add(new Client(0,2));
+	//boardPlayer.add(new Client(1,2));
+	//boardPlayer.add(new Client(2,2));
+	//boardPlayer.add(new Client(3,2));
+	var spawn = new Spawner(boardPlayer, 3,0,5,5);
+	console.log(boardPlayer);
+	spawn.run();
 	// estos 8 no valen
-	boardPlayer.add(new DeadZone(150, 90, 10, 70));
+	/*boardPlayer.add(new DeadZone(150, 90, 10, 70));
 	boardPlayer.add(new DeadZone(120, 185, 10, 70));
 	boardPlayer.add(new DeadZone(90, 281, 10, 70));
-	boardPlayer.add(new DeadZone(60, 377, 10, 70));
+	boardPlayer.add(new DeadZone(60, 377, 10, 70));*/
 
 	boardPlayer.add(new DeadZone(305, 90, 10, 70));
 	boardPlayer.add(new DeadZone(337, 185, 10, 70));
