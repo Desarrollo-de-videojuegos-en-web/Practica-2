@@ -220,30 +220,27 @@ DeadZone.prototype.draw = function(ctx){
 
 
 var Spawner = function(boardPlayer, clients, type, frequency, delay){
-	console.log(boardPlayer);
-
 	this.proto = new Client();
 	this.board = boardPlayer;
 	this.clients = clients;
 	this.type = type;
 	this.frequency = frequency;
 	this.delay = delay;
+	this.free = true;
 };
 
 Spawner.prototype.run = function(dt) {
-	var counter = 0;
-	var wait = this.delay;
-	this.x(this);
-	
-		
-	
- 
+	this.prototype(this);
 };
-Spawner.prototype.x = function(that){
-	setTimeout(function(that){
-		var bar = Math.floor((Math.random() * 3) + 0);
-		that.board.add(that.clone(bar, that.proto));
-	},600);
+
+Spawner.prototype.prototype = function(that){
+	for(i=0; i<that.clients; i++){
+		that.delay+=Math.floor((Math.random() * 2000) + 0);
+		setTimeout(function(){
+			var bar = Math.floor((Math.random() * 4) + 0);
+			that.board.add(that.clone(bar, that.proto));
+		}, that.delay+ that.frequency);
+	}
 };
 
 Spawner.prototype.clone = function (bar, proto) {
@@ -254,30 +251,12 @@ Spawner.prototype.clone = function (bar, proto) {
         return client;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 var playGame = function(){
 	var board = new GameBoard();
 	board.add(new BackSprite());
 	var boardPlayer = new GameBoard();
 	boardPlayer.add(new Player());
-	//boardPlayer.add(new Client(0,2));
-	//boardPlayer.add(new Client(1,2));
-	//boardPlayer.add(new Client(2,2));
-	//boardPlayer.add(new Client(3,2));
-	var spawn = new Spawner(boardPlayer, 3,0,5,5);
+	var spawn = new Spawner(boardPlayer, 8,0,1000,500);
 	console.log(boardPlayer);
 	spawn.run();
 	// estos 8 no valen
