@@ -1,4 +1,4 @@
-var OBJECT_PLAYER = 1,
+ var OBJECT_PLAYER = 1,
     OBJECT_BEER = 2,
     OBJECT_CLIENT = 4,
     OBJECT_DEADZONE = 8;
@@ -11,6 +11,42 @@ var sprites = {
 	Player: {sx: 512,sy: 0,w: 56,h: 66,frames: 1},
 	TapperGameplay: {sx: 0,sy: 480,w: 512,h: 480,frames: 1}
 };
+
+/*var beer = {
+	{x:325,y:90},
+	{x:357,y:185},
+	{x:389,y:281},
+	{x:421,y:377}
+};
+
+var client = {
+	{x:120,y:90},
+	{x:90,y:185},
+	{x:60,y:281},
+	{x:30,y:377}
+};
+
+var player = {	
+	{x:325,y:90},
+	{x:357,y:185},
+	{x:389,y:281},
+	{x:421,y:377}
+};
+
+var leftDeadzone = {
+	{x:120,y:90},
+	{x:90,y:185},
+	{x:60,y:281},
+	{x:30,y:377}
+};
+
+var rigthDeadzone = {
+	{x:325,y:90},
+	{x:357,y:185},
+	{x:389,y:281},
+	{x:421,y:377}
+};*/
+
 
 var playerVPos = [90,185,281,377];
 var playerHPos = [325,357,389,421];
@@ -42,7 +78,8 @@ var Player = function(){
 	this.step = function(dt){
 		this.checkUp(this);
 		this.checkDown(this);
-		this.checkFire(this);		
+		this.checkFire(this);	
+		this.checkBeer();	
 	};
 };
 
@@ -52,9 +89,8 @@ Player.prototype.type = OBJECT_PLAYER;
 Player.prototype.checkFire = function(that){
 	if(Game.keys['fire']){
 		Game.keys['fire'] = false;
-			var newBeer = new Beer('Beer',that.pos, that.x, that.y, 1);
-			that.board.add(newBeer);
-		
+		var newBeer = new Beer('Beer',that.pos, that.x, that.y, 1);
+		that.board.add(newBeer);
 	}
 };
 
@@ -81,10 +117,17 @@ Player.prototype.checkDown = function(that){
 	}
 };
 
+Player.prototype.checkBeer = function(){
+	var collision = this.board.collide(this,OBJECT_BEER);
+	if(collision) {
+		GameManager.alertBeerCollected();
+		GameManager.checkGameState();
+		collision.hit(0);
+	}
+};
 
-
-var Beer = function(sprite, pos, x, y, vel)
-{	if(sprite.localeCompare('Glass')==0){
+var Beer = function(sprite, pos, x, y, vel){
+	if(sprite.localeCompare('Glass')==0){
 		console.log('Glass');
 		this.setup(sprite, {x:x,y:y,vx:vel});
 	}else{
@@ -96,40 +139,13 @@ var Beer = function(sprite, pos, x, y, vel)
 
 	this.step = function(dt){
 		this.x -= this.vx;
-		this.checkPlayerHit();
-		this.checkClientHit();
-		this.checkDeadzoneHit();
+		//this.checkClientHit();
 	};
 
 };
 
 Beer.prototype = new Sprite();
 Beer.prototype.type = OBJECT_BEER;
-
-Beer.prototype.checkPlayerHit = function(){
-	var collision = this.board.collide(this,OBJECT_PLAYER);
-	if(collision) {
-		GameManager.alertBeerCollected();
-		GameManager.checkGameState();
-		this.hit(0);
-		
-	}
-};
-
-Beer.prototype.checkClientHit = function(){
-	var collision = this.board.collide(this,OBJECT_CLIENT);
-	if(collision) {
-		GameManager.alertBeer();
-		GameManager.checkGameState();
-	}
-};
-
-Beer.prototype.checkDeadzoneHit = function(){
-	var collision = this.board.collide(this,OBJECT_DEADZONE);
-	if(collision) {
-		this.hit(0);	
-	}
-};
 
 Beer.prototype.hit = function(damage){
 	this.board.remove(this);
@@ -153,7 +169,6 @@ var Client = function(pos,vel){
 	this.step = function(dt){
 		this.x += 1;
 		this.checkBeerHit();
-		this.checkDeadzoneHit();
 	};
 };
 
@@ -164,17 +179,11 @@ Client.prototype.checkBeerHit = function(){
 	var collision = this.board.collide(this,OBJECT_BEER);
 	if(collision) {
 		GameManager.alertServedClient();
+		GameManager.alertBeer();
 		GameManager.checkGameState();
 		this.hit(0);
 		collision.hit(0);
-		this.board.add(new Beer('Glass', this.pos, this.x, this.y, -1));
-	}
-};
-
-Client.prototype.checkDeadzoneHit = function(){
-	var collision = this.board.collide(this,OBJECT_DEADZONE);
-	if(collision) {
-		this.hit(0);
+		this.board.add(new Beer('Glass', this.pos, collision.x, collision.y, -1));
 	}
 };
 
@@ -184,7 +193,6 @@ Client.prototype.hit = function(damage){
 
 
 var DeadZone = function(x,y,w,h){
-	//this.setup('', {x:100,y:100,w:10,h:70});
 	this.x=x;
 	this.y=y;
 	this.w=w;
@@ -201,12 +209,19 @@ DeadZone.prototype.type = OBJECT_DEADZONE;
 
 DeadZone.prototype.checkClientHit = function(){
 	var collision = this.board.collide(this,OBJECT_CLIENT);
-	if(collision) collision.hit(0); 
+	
+	if(collision) {
+		GameManager.alertClientDeadZone();
+		collision.hit(0); 
+	}
 };
 
 DeadZone.prototype.checkBeerHit = function(){
 	var collision = this.board.collide(this,OBJECT_BEER);
-	if(collision) collision.hit(0);
+	if(collision){	
+		GameManager.alertJarDeadZone();
+		collision.hit(0);
+	}
 };
 
 DeadZone.prototype.hit = function(damage){
@@ -234,14 +249,15 @@ var Spawner = function(boardPlayer, clients, type, frequency, delay, bar){
 };
  
 Spawner.prototype.run = function(dt) {
-	this.prototype(this);
+	this.generateClients(this);
 };
 
-Spawner.prototype.prototype = function(that){
+Spawner.prototype.generateClients = function(that){
 	for(i=0; i<that.clients; i++){
 		that.delay+=Math.floor((Math.random() * 1000) + 0);
 		setTimeout(function(){
 			that.board.add(that.clone(that.bar, that.proto));
+			console.log(that.board);
 		}, that.delay + that.frequency*i);
 	}
 };
@@ -264,7 +280,7 @@ var GameManager = new function(){
 	};
 
 	this.alertBeer = function(){
-		this.glass+=1;
+		this.glass = this.glass+1;
 		console.log('glass creada');
 	};
 
@@ -286,9 +302,11 @@ var GameManager = new function(){
 	};
 
 	this.alertClientDeadZone = function(){
+		console.log('cliente en la deadzone, has perdido');
 	};
 
 	this.alertJarDeadZone = function(){
+		console.log('cerveza en la deadzone, has perdido');
 	};
 
 };
@@ -300,11 +318,12 @@ var playGame = function(){
 	board.add(new BackSprite());
 	var boardPlayer = new GameBoard();
 	boardPlayer.add(new Player());
-	var spawn1 = new Spawner(boardPlayer, 1,0,3000,500, 0);
-	var spawn2 = new Spawner(boardPlayer, 1,0,1500,1000, 1);
+	var spawn1 = new Spawner(boardPlayer, 2,0,3000,500, 0);
+	var spawn2 = new Spawner(boardPlayer, 3,0,1500,1000, 1);
 	console.log(boardPlayer);
 	spawn1.run();
 	spawn2.run();
+	
 	// estos 8 no valen
 	/*boardPlayer.add(new DeadZone(150, 90, 10, 70));
 	boardPlayer.add(new DeadZone(120, 185, 10, 70));
@@ -317,14 +336,14 @@ var playGame = function(){
 	boardPlayer.add(new DeadZone(401, 377, 10, 70));*/
 
 
-	/*boardPlayer.add(new DeadZone(345, 90, 10, 70));
+	boardPlayer.add(new DeadZone(345, 90, 10, 70));
 	boardPlayer.add(new DeadZone(377, 185, 10, 70));
 	boardPlayer.add(new DeadZone(409, 281, 10, 70));
 	boardPlayer.add(new DeadZone(441, 377, 10, 70));
 	boardPlayer.add(new DeadZone(95, 90, 10, 70));
 	boardPlayer.add(new DeadZone(65, 185, 10, 70));
 	boardPlayer.add(new DeadZone(35, 281, 10, 70));
-	boardPlayer.add(new DeadZone(5, 377, 10, 70));*/
+	boardPlayer.add(new DeadZone(5, 377, 10, 70));
 
 	Game.setBoard(2,board);
 	Game.setBoard(3,boardPlayer);
