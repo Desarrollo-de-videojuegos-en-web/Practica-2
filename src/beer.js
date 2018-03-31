@@ -1,10 +1,17 @@
+var beerPos = {
+	0:{x:325, y:90},
+	1:{x:357, y:185},
+	2:{x:389, y:281},
+	3:{x:421, y:377}
+};
+
+
+
 var Beer = function(sprite, pos, x, y, vel){
 	if(sprite.localeCompare('Glass')==0){
-		console.log('Glass');
 		this.setup(sprite, {x:x,y:y,vx:vel});
 	}else{
-		console.log('Beer', sprite);
-		this.setup(sprite, {x:beerHPos[pos]-50,y:beerVPos[pos],vx:vel});
+		this.setup(sprite, {x:beerPos[pos].x-50,y:beerPos[pos].y,vx:vel});
 	}
 	this.pos=pos;
 	this.draw(Game.ctx);
@@ -13,7 +20,6 @@ var Beer = function(sprite, pos, x, y, vel){
 		this.x -= this.vx;
 		//this.checkClientHit();
 	};
-
 };
 
 Beer.prototype = new Sprite();
@@ -24,11 +30,10 @@ Beer.prototype.hit = function(damage){
 };
 
 Beer.prototype.clone = function(){
-	var beer = new Beer();
-    beer.x = this.x;
-    beer.y = this.y;
+	var beer = this;
+    
     beer.sprite = 'Glass';
     beer.vx=-1;
-    beer.pos=this.pos;
+
     return beer;
 };
