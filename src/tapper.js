@@ -98,8 +98,8 @@ var playGame = function(){
 	boardPlayer.add(new DeadZone(337, 185, 10, 70));
 	boardPlayer.add(new DeadZone(369, 281, 10, 70));
 	boardPlayer.add(new DeadZone(401, 377, 10, 70));*/
-
-
+    
+  
 	boardPlayer.add(new DeadZone(345, 90, 10, 70));
 	boardPlayer.add(new DeadZone(377, 185, 10, 70));
 	boardPlayer.add(new DeadZone(409, 281, 10, 70));
@@ -113,6 +113,7 @@ var playGame = function(){
 	Game.setBoard(3,boardPlayer);
 
 };
+
 
 var loseGame = function() {
   Game.setBoard(3,new TitleScreen("You lose!", 

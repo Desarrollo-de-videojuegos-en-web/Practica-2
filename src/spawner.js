@@ -24,7 +24,8 @@ Spawner.prototype.generateClients = function(that){
 };
 
 Spawner.prototype.clone = function (bar, proto) {
-        var client = new Client(bar,5);
+        var client = new Client(bar,40);
+        var client = proto;
         client.x = clientHPos[bar];
         client.y = clientVPos[bar];
         client.sprite = proto.sprite;
