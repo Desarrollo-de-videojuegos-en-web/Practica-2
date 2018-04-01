@@ -4,21 +4,18 @@ var GameManager = new function(){
 
 	this.alertClient = function(clients){
 		this.clients+=clients;
-		console.log('añadidos ' + clients + ' clientes');
 	};
 
 	this.alertBeer = function(){
-		this.glass = this.glass+1;
-		console.log('glass creada');
+		++this.glass;
 	};
 
 	this.alertBeerCollected = function(){
-		this.glass-=1;
-		console.log('glass recogida');
+		--this.glass;
 	};
 
 	this.alertServedClient = function(){
-		this.clients-=1;
+		--this.clients;
 		
 	};
 
@@ -26,6 +23,7 @@ var GameManager = new function(){
 		console.log(this.clients, this.glass);
 		if(this.clients==0 && this.glass==0){
 			console.log('no quedan clientes ni cervezas, has ganado');
+			this.winGame();
 		}
 	};
 
@@ -37,4 +35,11 @@ var GameManager = new function(){
 		console.log('cerveza en la deadzone, has perdido');
 	};
 
+	this.loseGame = function(){
+		console.log('lose');
+	};
+
+	this.winGame = function(){
+
+	};
 };

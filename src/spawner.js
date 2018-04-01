@@ -1,33 +1,45 @@
-var Spawner = function(boardPlayer, clients, type, frequency, delay, bar){
-	GameManager.alertClient(clients);
-	this.proto = new Client();
-	this.board = boardPlayer;
-	this.clients = clients;
-	this.type = type;
-	this.frequency = frequency;
-	this.delay = delay;
-	this.bar = bar;
-};
- 
-Spawner.prototype.run = function(dt) {
-	this.generateClients(this);
-};
+var Spawner = function(client, num, delay, frec, pos, vel){
+    this.client = client;
+    this.num = num;
+    this.maxFrequency = frec;
+    this.tmpFrequency = 0;
+    this.delay = delay;
+    this.pos = pos;
+    this.vel = vel;
+    GameManager.alertClient(num);
+}
 
-Spawner.prototype.generateClients = function(that){
-	for(i=0; i<that.clients; i++){
-		that.delay+=Math.floor((Math.random() * 1000) + 0);
-		setTimeout(function(){
-			that.board.add(that.clone(that.bar, that.proto));
-			console.log(that.board);
-		}, that.delay + that.frequency*i);
-	}
-};
+Spawner.prototype.draw = function(){
+    return;
+}
 
-Spawner.prototype.clone = function (bar, proto) {
-        var client = new Client(bar,40);
-        var client = proto;
-        client.x = clientHPos[bar];
-        client.y = clientVPos[bar];
-        client.sprite = proto.sprite;
-        return client;
-};
+Spawner.prototype.step = function(dt){
+    if(this.delay > 0) {this.delay -= dt;}
+    else{
+    	if(this.tmpFrequency > 0) {this.tmpFrequency -= dt;}
+    	else{
+	        if(this.tmpFrequency <= 0){
+	            this.board.add(Object.create(this.client, {
+	            	x:{
+	            		writable:true, 
+	            		configurable:true, 
+	            		value: clientPos[this.pos].x
+	            	},
+	            	y:{
+	            		writable:true, 
+	            		configurable:true, 
+	            		value: clientPos[this.pos].y
+	            	},
+					vx:{
+	            		writable:true, 
+	            		configurable:true, 
+	            		value: this.vel
+	            	}
+	            }));
+	            this.tmpFrequency = this.maxFrequency;
+	            if(--this.num === 0)
+	                this.board.remove(this);
+	        }
+	    }
+    }  
+}
