@@ -30,14 +30,15 @@ var playGame = function(){
 	boardPlayer.add(new DeadZone(5));
 	boardPlayer.add(new DeadZone(6));
 	boardPlayer.add(new DeadZone(7));
+	board.add(new ScoreBar());
 
 	Game.setBoard(2,board);
 	Game.setBoard(3,boardPlayer);
 };
 
 var loseGame = function() {
-  Game.setBoard(3,new TitleScreen("You lose!", 
-                                  "Press fire to play again",
+  	Game.setBoard(3,new TitleScreen("You lose!", 
+                                  "Press ENTER to play again",
                                   playGame));
 };
 
@@ -50,6 +51,6 @@ var startGame = function() {
 };
 
 window.addEventListener("load", function() {
-  Game.initialize("game",sprites,startGame);
+  Game.initialize("game",sprites,playGame);
 });
 
