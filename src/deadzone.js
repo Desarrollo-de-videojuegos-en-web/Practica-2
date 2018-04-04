@@ -19,12 +19,14 @@ var DeadZone = function(pos){
 		var client = this.board.collide(this,OBJECT_CLIENT);
 		if(client) {
 			client.hit();
-			GameManager.loseGame();
+			GameManager.alertClientDeadZone();
+			GameManager.checkGameState();
 		}
 		var beer = this.board.collide(this,OBJECT_BEER);
 		if(beer) {  
 			beer.hit();
-			GameManager.loseGame();
+			GameManager.alertJarDeadZone();
+			GameManager.checkGameState();
 		}
 	};
 };
