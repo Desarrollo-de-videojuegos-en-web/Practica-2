@@ -11,7 +11,7 @@ var sprites = {
 	Player: {sx: 512,sy: 0,w: 56,h: 66,frames: 1},
 	TapperGameplay: {sx: 0,sy: 480,w: 512,h: 480,frames: 1}
 };
-
+ 
 var playGame = function(){
 	var board = new GameBoard();
 	board.add(new BackSprite());
@@ -33,7 +33,6 @@ var playGame = function(){
 
 	Game.setBoard(2,board);
 	Game.setBoard(3,boardPlayer);
-
 };
 
 var loseGame = function() {
@@ -43,7 +42,14 @@ var loseGame = function() {
 };
 
 
+var startGame = function() {
+  var ua = navigator.userAgent.toLowerCase();
+  Game.setBoard(3,new TitleScreen("Tapper", 
+                                  "Press ENTER to start playing",
+                                  playGame));
+};
+
 window.addEventListener("load", function() {
-  Game.initialize("game",sprites,playGame);
+  Game.initialize("game",sprites,startGame);
 });
 

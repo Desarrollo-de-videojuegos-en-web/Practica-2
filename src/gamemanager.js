@@ -37,6 +37,9 @@ var GameManager = new function(){
 
 	this.loseGame = function(){
 		console.log('lose');
+		Game.setBoard(3,new TitleScreen("You lose!", 
+                                  "Press ENTER to play again",
+                                  playGame));
 	};
 
 	this.winGame = function(){
