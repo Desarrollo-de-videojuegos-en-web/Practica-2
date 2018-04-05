@@ -84,13 +84,28 @@ var Game = new function() {
     if(dt > maxTime) { dt = maxTime; }
 
     for(var i=0,len = boards.length;i<len;i++) {
-      if(boards[i]) { 
+      if(boards[i] && !boards[i].active) { 
+        console.log(boards[i].active);
+
         boards[i].step(dt);
         boards[i].draw(Game.ctx);
       }
     }
     lastTime = curTime;
   };
+
+  this.activateBoards= function(num){
+    if(boards[num]){
+      boards[num].active=true;
+    } 
+  };
+
+  this.deActivateBoards= function(num){
+    if(boards[num]){
+      boards[num].active=false;
+    } 
+  };
+  
   
   // Change an active game board
   this.setBoard = function(num,board) { boards[num] = board; };
@@ -162,7 +177,7 @@ var SpriteSheet = new function() {
   return this;
 };
 
-var TitleScreen = function TitleScreen(title,subtitle,callback) {
+var TitleScreen = function TitleScreen(title,subtitle,score,callback) {
   var up = false;
   this.step = function(dt) {
     if(!Game.keys['enter']) up = true;
@@ -185,13 +200,17 @@ var TitleScreen = function TitleScreen(title,subtitle,callback) {
     ctx.font = "bold 20px bangers";
     var measure2 = ctx.measureText(subtitle);
     ctx.fillText(subtitle,Game.width/2 - measure2.width/2,Game.height/2 + 40);
+
+    ctx.font = "bold 20px bangers";
+    var measure3 = ctx.measureText(score);
+    ctx.fillText(score,Game.width/2 - measure3.width/2,Game.height/2 + 80);
   };
 };
 
 
 var GameBoard = function() {
   var board = this;
-
+  this.active=false;
   // The current list of objects
   this.objects = [];
   this.cnt = {};
@@ -199,6 +218,7 @@ var GameBoard = function() {
   // Add a new object to the object list
   this.add = function(obj) { 
     obj.board=this; 
+    this.active=false;
     this.objects.push(obj); 
     this.cnt[obj.type] = (this.cnt[obj.type] || 0) + 1;
     return obj; 

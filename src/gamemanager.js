@@ -1,4 +1,5 @@
 var GameManager = new function(){
+	this.maxScore=0;
 	this.clients=0;
 	this.glass=0;
 	this.score=0;
@@ -26,14 +27,12 @@ var GameManager = new function(){
 	};
 
 	this.checkGameState = function(){
-		console.log(this.clients, this.glass);
+		console.log(this.clients, this.deadClients, this.glass, this.deadGlass);
 		
 		if(this.clients==0 && this.glass==0){
 			console.log('no quedan clientes ni cervezas, has ganado');
 			this.winGame();
-		}
-
-		if((this.glass-this.deadGlass==0 && this.clients-this.deadClients==0) || this.lives==0){
+		}else if(((this.glass-this.deadGlass==0) && (this.clients-this.deadClients==0)) || this.lives==0){
 			this.loseGame();
 		}
 
@@ -45,30 +44,48 @@ var GameManager = new function(){
 		++this.deadClients;
 	};
 
-	this.alertJarDeadZone = function(){
+	this.alertGlassDeadZone = function(){
 		--this.lives;
 		++this.deadGlass;
 	};
 
+	this.alertBeerDeadZone = function(){
+		--this.lives;
+	};
+
 	this.resetStatus = function(){
+		if(this.score> this.maxScore){
+			this.maxScore= this.score;
+		}
+
 		this.clients=0;
 		this.glass=0;
 		this.score=0;
+		this.deadClients=0;
+		this.deadGlass=0;
 		this.lives=3;
 	};
 
 	this.loseGame = function(){
 		console.log('lose');
 		this.resetStatus();
-		Game.setBoard(3,new TitleScreen("You lose!", 
-                                  "Press ENTER to play again",
+		//Game.remove(this);
+
+		
+		Game.activateBoards(2);
+		Game.activateBoards(3);
+		Game.setBoard(5,new TitleScreen("You lose!", 
+                                  "Press ENTER to play again"," MaxScore: "+ this.maxScore,
                                   playGame));
+
 	};
 
 	this.winGame = function(){
 		this.resetStatus();
-		Game.setBoard(3,new TitleScreen("You win!!", 
-                                  "Press ENTER to start playing",
+		Game.activateBoards(2);
+		Game.activateBoards(3);
+		Game.setBoard(6,new TitleScreen("You win!!", 
+                                  "Press ENTER to start playing"," MaxScore: "+ this.maxScore,
                                   playGame));
 	};
 

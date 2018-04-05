@@ -23,9 +23,13 @@ var DeadZone = function(pos){
 			GameManager.checkGameState();
 		}
 		var beer = this.board.collide(this,OBJECT_BEER);
-		if(beer) {  
+		if(beer && this.x>300) {  
 			beer.hit();
-			GameManager.alertJarDeadZone();
+			GameManager.alertGlassDeadZone();
+			GameManager.checkGameState();
+		}else if (beer && this.x<=300){
+			beer.hit();
+			GameManager.alertBeerDeadZone();
 			GameManager.checkGameState();
 		}
 	};
