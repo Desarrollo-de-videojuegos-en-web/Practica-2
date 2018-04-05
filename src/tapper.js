@@ -34,23 +34,26 @@ var playGame = function(){
 
 	Game.setBoard(2,board);
 	Game.setBoard(3,boardPlayer);
+	Game.activateBoards(4);
+	Game.activateBoards(5);
+	Game.activateBoards(6);
+	Game.deActivateBoards(2);
+	Game.deActivateBoards(3);
+
+
+
 };
 
-var loseGame = function() {
-  	Game.setBoard(3,new TitleScreen("You lose!", 
-                                  "Press ENTER to play again",
-                                  playGame));
-};
 
 
 var startGame = function() {
   var ua = navigator.userAgent.toLowerCase();
-  Game.setBoard(3,new TitleScreen("Tapper", 
-                                  "Press ENTER to start playing",
+  Game.setBoard(4,new TitleScreen("Tapper", 
+                                  "Press ENTER to start playing","",
                                   playGame));
 };
 
 window.addEventListener("load", function() {
-  Game.initialize("game",sprites,playGame);
+  Game.initialize("game",sprites,startGame);
 });
 
