@@ -22,12 +22,35 @@ var DeadZone = function(pos){
 			GameManager.alertClientDeadZone();
 			GameManager.checkGameState();
 		}
-		var beer = this.board.collide(this,OBJECT_BEER);
-		if(beer && this.x>300) {  
-			beer.hit();
+		var glass = this.board.collide(this,OBJECT_GLASS);
+		if(glass) { 
+			glass.hit();
+			var breakGlass = Object.create(glass, {
+				sprite:{
+					writable:true, configurable:true, value:'Beer'
+				},
+				x:{
+					writable:true, configurable:true, value: glass.x+25
+				},
+				y:{
+					writable:true, configurable:true, value: glass.y+25
+				},
+				vx:{
+					writable:true, configurable:true, value: 0
+				},
+				type:{
+					writable:true, configurable:true, value: OBJECT_NULL
+				},
+				delay:{
+					writable:true, configurable:true, value: 15
+				}
+			});
+			this.board.add(breakGlass);
 			GameManager.alertGlassDeadZone();
-			GameManager.checkGameState();
-		}else if (beer && this.x<=300){
+			//GameManager.checkGameState();
+		}
+		var beer = this.board.collide(this,OBJECT_BEER);
+		if (beer){
 			beer.hit();
 			GameManager.alertBeerDeadZone();
 			GameManager.checkGameState();

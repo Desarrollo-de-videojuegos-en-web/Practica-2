@@ -1,7 +1,10 @@
  var OBJECT_PLAYER = 1,
     OBJECT_BEER = 2,
     OBJECT_CLIENT = 4,
-    OBJECT_DEADZONE = 8;
+    OBJECT_DEADZONE = 8,
+    OBJECT_GLASS = 16,
+    OBJECT_TIP = 32,
+    OBJECT_NULL = 64;
 
 var sprites = {
 	Beer: {sx: 512,sy: 99,w: 23,h: 32,frames: 1},
@@ -12,8 +15,8 @@ var sprites = {
 	TapperGameplay: {sx: 0,sy: 480,w: 512,h: 480,frames: 1}
 };
  
-var playGame = function(){
-	var board = new GameBoard();
+var playGame = function(){ 
+	var board = new GameBoard();  
 	board.add(new BackSprite());
 	var boardPlayer = new GameBoard();
 	boardPlayer.add(new Player());
@@ -23,26 +26,28 @@ var playGame = function(){
 	boardPlayer.add(new Spawner(client, 1,1,4,3, 150));
 	
 	boardPlayer.add(new DeadZone(0));
-	boardPlayer.add(new DeadZone(1));
-	boardPlayer.add(new DeadZone(2));
+	boardPlayer.add(new DeadZone(1)); 
+	boardPlayer.add(new DeadZone(2)); 
 	boardPlayer.add(new DeadZone(3));
 	boardPlayer.add(new DeadZone(4));
 	boardPlayer.add(new DeadZone(5));
 	boardPlayer.add(new DeadZone(6));
 	boardPlayer.add(new DeadZone(7));
-	board.add(new ScoreBar());
-
+	boardPlayer.add(new ScoreBar());
+	boardPlayer.add(new Lifes());
+	
 	Game.setBoard(2,board);
 	Game.setBoard(3,boardPlayer);
-	Game.activateBoards(4);
-	Game.activateBoards(5);
-	Game.activateBoards(6);
-	Game.deActivateBoards(2);
-	Game.deActivateBoards(3);
+
+	Game.deActivateBoard(4);
+	Game.deActivateBoard(5);
+	Game.deActivateBoard(6);
+	Game.activateBoard(2);
+	Game.activateBoard(3);
 
 
 
-};
+}; 
 
 
 
