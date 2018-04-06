@@ -14,6 +14,43 @@ var sprites = {
 	Player: {sx: 512,sy: 0,w: 56,h: 66,frames: 1},
 	TapperGameplay: {sx: 0,sy: 480,w: 512,h: 480,frames: 1}
 };
+
+var clients = {
+	Normal1: {sx: 0,sy: 0,w: 134,h: 134,frames: 1},
+	Relax1: {sx: 134,sy: 0,w: 134,h: 134,frames: 1},
+	Angry1: {sx: 268,sy: 0,w: 134,h: 134,frames: 1},
+	VeryAngry1: {sx: 402,sy: 0,w: 134,h: 134,frames: 1},
+
+	Normal2: {sx: 0,sy: 134,w: 134,h: 134,frames: 1},
+	Relax2: {sx: 134,sy: 134,w: 134,h: 134,frames: 1},
+	Angry2: {sx: 268,sy: 134,w: 134,h: 134,frames: 1},
+	VeryAngry2: {sx: 402,sy: 134,w: 134,h: 134,frames: 1},
+
+	Normal3: {sx: 0,sy: 268,w: 134,h: 134,frames: 1},
+	Relax3: {sx: 134,sy: 268,w: 134,h: 134,frames: 1},
+	Angry3: {sx: 268,sy: 268,w: 134,h: 134,frames: 1},
+	VeryAngry3: {sx: 402,sy: 268,w: 134,h: 134,frames: 1},
+
+	Normal4: {sx: 0,sy: 402,w: 134,h: 134,frames: 1},
+	Relax4: {sx: 134,sy: 402,w: 134,h: 134,frames: 1},
+	Angry4: {sx: 268,sy: 402,w: 134,h: 134,frames: 1},
+	VeryAngry4: {sx: 402,sy: 402,w: 134,h: 134,frames: 1},
+
+	Served1: {sx: 536,sy: 0,w: 232,h: 143,frames: 1},
+	Served2: {sx: 536,sy: 143,w: 232,h: 143,frames: 1},
+	Served3: {sx: 536,sy: 286,w: 232,h: 143,frames: 1},
+	Served4: {sx: 536,sy: 409,w: 232,h: 143,frames: 1},
+
+	Drinking1: {sx: 766,sy: 0,w: 173,h: 134,frames: 1},
+	Drinking2: {sx: 766,sy: 134,w: 173,h: 134,frames: 1},
+	Drinking3: {sx: 766,sy: 268,w: 173,h: 134,frames: 1},
+	Drinking4: {sx: 766,sy: 402,w: 173,h: 134,frames: 1},
+
+	Drunk1: {sx: 939,sy: 0,w: 138,h: 134,frames: 1},
+	Drunk2: {sx: 939,sy: 134,w: 138,h: 134,frames: 1},
+	Drunk3: {sx: 939,sy: 268,w: 138,h: 134,frames: 1},
+	Drunk4: {sx: 939,sy: 402,w: 138,h: 134,frames: 1}
+};
  
 var playGame = function(){ 
 	var board = new GameBoard();  
@@ -59,6 +96,6 @@ var startGame = function() {
 };
 
 window.addEventListener("load", function() {
-  Game.initialize("game",sprites,startGame);
+  Game.initialize("game",sprites,clients,playGame);
 });
 
