@@ -8,7 +8,6 @@ var playerPos = {
 var Player = function(){
 	this.setup('Player', {x:playerPos[0].x,y:playerPos[0].y});
 	this.pos = 0;
-	this.draw(Game.ctx);
 
 	this.step = function(dt){
 		if(Game.keys['fire']){
@@ -23,8 +22,8 @@ var Player = function(){
 			this.pos = (this.pos + 1 ) % 4;
 			Game.keys['down'] = false;
 		}
-		var collision = this.board.collide(this,OBJECT_BEER);
-		if(collision && collision.vx!=0) {
+		var collision = this.board.collide(this,OBJECT_GLASS);
+		if(collision) {
 			GameManager.alertBeerCollected();
 			GameManager.checkGameState();
 			this.board.remove(collision);

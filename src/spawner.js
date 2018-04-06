@@ -1,3 +1,4 @@
+
 var Spawner = function(client, num, delay, frec, pos, vel){
     this.client = client;
     this.num = num;
@@ -20,6 +21,11 @@ Spawner.prototype.step = function(dt){
     	else{
 	        if(this.tmpFrequency <= 0){
 	            this.board.add(Object.create(this.client, {
+	            	sprite:{
+						writable:true, 
+	            		configurable:true, 
+	            		value: 'Relax'+ Math.round(Math.random() * (3) + 1)
+	            	},
 	            	x:{
 	            		writable:true, 
 	            		configurable:true, 

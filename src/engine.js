@@ -28,7 +28,7 @@ var Game = new function() {
   var boards = [];
 
   // Game Initialization
-  this.initialize = function(canvasElementId,sprite_data,callback) {
+  this.initialize = function(canvasElementId,sprite_data,clients_data,callback) {
     this.canvas = document.getElementById(canvasElementId);
 
     this.playerOffset = 10;
@@ -49,7 +49,7 @@ var Game = new function() {
       this.setBoard(4,new TouchControls());
     }
 
-    SpriteSheet.load(sprite_data,callback);
+    SpriteSheet.load(sprite_data,clients_data,callback);
   };
   
 
@@ -142,6 +142,7 @@ var Game = new function() {
       this.canvas.height = h;
     }
 
+
     this.canvas.style.position='absolute';
     this.canvas.style.left="0px";
     this.canvas.style.top="0px";
@@ -153,23 +154,58 @@ var Game = new function() {
 
 var SpriteSheet = new function() {
   this.map = { }; 
+  this.clientsData = { };
+  this.spriteData = { };
 
-  this.load = function(spriteData,callback) { 
-    this.map = spriteData;
+  this.load = function(spriteData,clientsData,callback) { 
+    this.map = Object.assign({}, spriteData, clientsData);
+    this.clientsData = clientsData;
+    this.spriteData = spriteData;
     this.image = new Image();
     this.image.onload = callback;
     this.image.src = 'img/spritesTapper.png';
+    this.image2 = new Image();
+    this.image2.onload = callback;
+    this.image2.src = 'img/clients.png';
   };
 
   this.draw = function(ctx,sprite,x,y,frame) {
-    var s = this.map[sprite];
+    //console.log(this.map[sprite], "   " ,this.map2[sprite]);
+    if(typeof(this.clientsData[sprite])!=="undefined"){
+      var s = this.clientsData[sprite];
+      if(!frame) frame = 0;
+      ctx.drawImage(this.image2,
+                       s.sx + frame * s.w, 
+                       s.sy, 
+                       s.w, s.h, 
+                       Math.floor(x), Math.floor(y),
+                       32, 23);
+    }else{
+      var s = this.map[sprite];
+      if(!frame) frame = 0;
+      ctx.drawImage(this.image,
+                       s.sx + frame * s.w, 
+                       s.sy, 
+                       s.w, s.h, 
+                       Math.floor(x), Math.floor(y),
+                       s.w, s.h);
+    }
+    /*var s = this.map[sprite];
     if(!frame) frame = 0;
     ctx.drawImage(this.image,
                      s.sx + frame * s.w, 
                      s.sy, 
                      s.w, s.h, 
                      Math.floor(x), Math.floor(y),
-                     s.w, s.h);
+                     s.w, s.h);*/
+    /*var s = this.map2[sprite];
+    if(!frame) frame = 0;
+    ctx.drawImage(this.image2,
+                     s.sx + frame * s.w, 
+                     s.sy, 
+                     s.w, s.h, 
+                     Math.floor(x), Math.floor(y),
+                     s.w, s.h);*/
   };
 
   return this;
@@ -307,6 +343,10 @@ Sprite.prototype.setup = function(sprite,props) {
   this.frame = this.frame || 0;
   this.w =  SpriteSheet.map[sprite].w;
   this.h =  SpriteSheet.map[sprite].h;
+  if(typeof(SpriteSheet.clientsData[sprite])!=="undefined"){
+      this.w =  32;
+      this.h =  23;
+    }
 };
 
 Sprite.prototype.merge = function(props) {
