@@ -24,7 +24,10 @@ var Client = function(sprite, pos, vx){
 				},
 				vx:{
 					writable:true, configurable:true, value: -this.vx
-				}
+				},
+				type:{
+					writable:true, configurable:true, value: OBJECT_GLASS
+				},
 			}))
 		}
 		};

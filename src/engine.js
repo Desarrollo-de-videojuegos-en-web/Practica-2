@@ -85,8 +85,6 @@ var Game = new function() {
 
     for(var i=0,len = boards.length;i<len;i++) {
       if(boards[i] && !boards[i].active) { 
-        console.log(boards[i].active);
-
         boards[i].step(dt);
         boards[i].draw(Game.ctx);
       }
@@ -94,13 +92,13 @@ var Game = new function() {
     lastTime = curTime;
   };
 
-  this.activateBoards= function(num){
+  this.deActivateBoard = function(num){
     if(boards[num]){
       boards[num].active=true;
     } 
   };
 
-  this.deActivateBoards= function(num){
+  this.activateBoard = function(num){
     if(boards[num]){
       boards[num].active=false;
     } 
@@ -217,8 +215,8 @@ var GameBoard = function() {
 
   // Add a new object to the object list
   this.add = function(obj) { 
-    obj.board=this; 
     this.active=false;
+    obj.board=this; 
     this.objects.push(obj); 
     this.cnt[obj.type] = (this.cnt[obj.type] || 0) + 1;
     return obj; 
@@ -255,8 +253,6 @@ var GameBoard = function() {
 
      for(var i=0,len=this.objects.length;i<len;i++) {
        var obj = this.objects[i];
-       //console.log(obj);
-       //console.log(obj[funcName]);
        obj[funcName].apply(obj,args);
      }
   };
@@ -296,12 +292,12 @@ var GameBoard = function() {
       if(obj != this) {
        var col = (!type || this.type & type) && board.overlap(obj,this);
        return col ? this : false;
-      }
+      } 
     });
   };
-
-
-};
+  
+  
+};  
 
 var Sprite = function() { };
 

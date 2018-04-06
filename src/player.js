@@ -12,7 +12,7 @@ var Player = function(){
 
 	this.step = function(dt){
 		if(Game.keys['fire']){
-			this.board.add(new Beer('Beer',this.pos, this.x, this.y, 50));
+			this.board.add(new Beer('Beer',this.pos, 50));
 			Game.keys['fire'] = false;
 		}
 		if(Game.keys['up']){
@@ -24,7 +24,7 @@ var Player = function(){
 			Game.keys['down'] = false;
 		}
 		var collision = this.board.collide(this,OBJECT_BEER);
-		if(collision) {
+		if(collision && collision.vx!=0) {
 			GameManager.alertBeerCollected();
 			GameManager.checkGameState();
 			this.board.remove(collision);
