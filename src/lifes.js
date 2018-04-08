@@ -1,4 +1,7 @@
-var Lifes = function(){
+/**
+ * Clase que representa las vidas del juego.
+ */
+ var Lifes = function(){
 	this.step = function(dt){
 		
 	};
@@ -6,6 +9,10 @@ var Lifes = function(){
 
 Lifes.prototype = new Sprite();
  
+/**
+ * Clase que representa las cervezas usadas en el juego.
+ * @param {ctx} objeto del canvas sobre el que se pintan las vidas
+ */
 Lifes.prototype.draw = function(ctx){  
 	var canvas = document.getElementById('game');
 	if (canvas.getContext) {
