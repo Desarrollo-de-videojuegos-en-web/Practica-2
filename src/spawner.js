@@ -1,4 +1,12 @@
-
+/**
+ * Clase que representa los generadores de clientes.
+ * @param {client} cliente a clonar
+ * @param {num} numero de clientes a generar
+ * @param {delay} velocidad respecto al inicio del juego para generar los clientes
+ * @param {frec} frecuencia de generacion de clientes
+ * @param {pos} posicion de la barra en la que generar los clientes
+ * @param {vel} velocidad de los clientes
+ */
 var Spawner = function(client, num, delay, frec, pos, vel){
     this.client = client;
     this.num = num;
@@ -7,20 +15,23 @@ var Spawner = function(client, num, delay, frec, pos, vel){
     this.delay = delay;
     this.pos = pos;
     this.vel = vel;
-    GameManager.alertClient(num);
+    GameManager.alertClient(num); // avisamos al gamemanager de los clientes que generamos
 }
 
 Spawner.prototype.draw = function(){
     return;
 }
 
+/**
+ * Gestina los eventos del spawner.
+ */
 Spawner.prototype.step = function(dt){
-    if(this.delay > 0) {this.delay -= dt;}
+    if(this.delay > 0) {this.delay -= dt;} // espera el tiempo indicado antes de generar clientes
     else{
-    	if(this.tmpFrequency > 0) {this.tmpFrequency -= dt;}
+    	if(this.tmpFrequency > 0) {this.tmpFrequency -= dt;} // espera el tiempo indicado entre la generecion de cada cliente
     	else{
 	        if(this.tmpFrequency <= 0){
-	            this.board.add(Object.create(this.client, {
+	            this.board.add(Object.create(this.client, { // conamos el cliente prototipo y modificamos sus campos
 	            	sprite:{
 						writable:true, 
 	            		configurable:true, 
@@ -43,7 +54,7 @@ Spawner.prototype.step = function(dt){
 	            	}
 	            }));
 	            this.tmpFrequency = this.maxFrequency;
-	            if(--this.num === 0)
+	            if(--this.num === 0) // eliminamos el spawner del tablero cuando haya terminado su funcion
 	                this.board.remove(this);
 	        }
 	    }
